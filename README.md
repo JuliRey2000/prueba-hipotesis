@@ -59,6 +59,7 @@ Campos opcionales de la hipótesis (aparecen en la ficha): `datos`, `comparacion
 | `carpeta` | `'.'` | Dónde se guardan preregistro, bitácora y apertura |
 | `n_perm` | `5000` | Permutaciones de la prueba del azar |
 | `graficar` | `True` | Muestra los histogramas del azar |
+| `indice` | `True` | Guarda la ficha y agrega la hipótesis a `indice_hipotesis.csv` |
 
 Devuelve un diccionario con `registro`, `bitacora`, `elegida`, `construccion`, `pasa_construccion`, `mde`, `medicion_prueba`, `p_prueba` y `veredicto`.
 
@@ -73,15 +74,32 @@ Si prefieres armar tu propio flujo paso a paso:
 | `registro` | `huella`, `preregistrar`, `mira_el_futuro`, `abrir_candado` |
 | `estadistica` | `armar_tabla`, `medir`, `prueba_permutacion`, `efecto_minimo_detectable`, `veredicto`, `ver` |
 | `validar` | `construir`, `validar`, `ficha` |
+| `almacen` | `conectar_drive`, `ver_indice`, `guardar_en_indice`, `fila_indice` |
+
+## Guardar todo en Google Drive
+
+```python
+carpeta = ph.conectar_drive()      # monta Drive y usa Mi unidad/Mentoria_Quant/hipotesis
+r = ph.validar(HIPOTESIS, datos, condicion, resultado_R, carpeta=carpeta)
+ph.ver_indice(carpeta)             # tabla con todas las hipótesis probadas
+```
+
+`conectar_drive('otra/ruta')` acepta cualquier carpeta. Fuera de Colab no falla: guarda en `./hipotesis`.
+
+**Carpeta compartida (mentoría):** el mentor comparte `Mentoria_Quant` como editor; cada alumno, en Drive, hace clic derecho → *Organizar → Agregar acceso directo → Mi unidad*. Así todos escriben en el mismo índice. Pon tu nombre en el `id` (`'julian_ibs_bajo'`) para no pisar archivos ajenos.
 
 ## Archivos que genera
 
 - `preregistro_<id>.json`: la hipótesis, la fecha y su huella SHA-256. Si cambias la hipótesis, lo detecta.
 - `bitacora_<id>.csv`: todas las variantes probadas en construcción, con p y p de Holm.
 - `apertura_<id>.json`: cuándo se abrió la prueba. La segunda vez avisa que ya no es fuera de muestra.
+- `ficha_<id>.txt`: la ficha final.
+- `indice_hipotesis.csv`: una fila por hipótesis (veredicto, diferencias, p, MDE). Si repites un `id`, se actualiza su fila.
 
-En Colab esos archivos se borran al cerrar la sesión: usa `carpeta='/content/drive/MyDrive/hipotesis'` para guardarlos en Drive.
+Sin Drive, en Colab esos archivos se borran al cerrar la sesión.
 
 ## Ejemplo completo
 
-`ejemplos/caida_fuerte.py` y `ejemplos/plantilla_colab.ipynb`.
+- `ejemplos/plantilla_colab.ipynb`: la plantilla para cada idea nueva.
+- `ejemplos/caida_fuerte.py`: caída > 2 % → rechazada en construcción.
+- `ejemplos/ibs_bajo.py`: cierre en la parte baja del rango → casi pasa, pero rechazada en construcción.

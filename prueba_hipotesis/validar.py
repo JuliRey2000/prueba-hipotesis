@@ -7,6 +7,7 @@ from statsmodels.stats.multitest import multipletests
 from .estadistica import armar_tabla, medir, prueba_permutacion, efecto_minimo_detectable, veredicto, ver
 from .graficos import grafico_azar, estilo
 from .registro import huella, preregistrar, mira_el_futuro, abrir_candado
+from .almacen import fila_indice, guardar_en_indice, guardar_ficha
 
 CAMPOS = ['id', 'condicion', 'variable_futura', 'umbral_R', 'costo_R', 'alfa',
           'variantes', 'regla_de_eleccion', 'construccion', 'prueba']
@@ -57,8 +58,11 @@ def construir(h, datos, condicion, resultado_R, n_perm=5000, graficar=True, carp
 
 
 def validar(h, datos, condicion, resultado_R, abrir_de_todos_modos=False,
-            n_perm=5000, graficar=True, carpeta='.'):
+            n_perm=5000, graficar=True, carpeta='.', indice=True):
     """Corre los pasos 4 a 8 del framework y devuelve un diccionario con todo el resultado.
+
+    Guarda en `carpeta` el preregistro, la bitácora, la apertura, la ficha y (si indice=True)
+    una fila en indice_hipotesis.csv. Usa carpeta=ph.conectar_drive() para dejarlo todo en Drive.
 
     h            diccionario HIPOTESIS
     datos        DataFrame con Open, High, Low, Close
@@ -111,7 +115,12 @@ def validar(h, datos, condicion, resultado_R, abrir_de_todos_modos=False,
            'pasa_construccion': pasa, 'mde': mde, 'medicion_prueba': m_prueba, 'p_prueba': p_prueba,
            'veredicto': resultado}
     print('\n── 8 · Ficha ──')
-    print(ficha(h, out))
+    texto = ficha(h, out)
+    print(texto)
+    guardar_ficha(h, texto, carpeta)
+    if indice:
+        idx = guardar_en_indice(fila_indice(h, out), carpeta)
+        print(f"\n✓ Guardada en el índice ({len(idx)} hipótesis en total) · {os.path.abspath(carpeta)}")
     return out
 
 

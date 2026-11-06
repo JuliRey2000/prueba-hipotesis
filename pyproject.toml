@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "prueba-hipotesis"
-version = "0.1.0"
+version = "0.2.0"
 description = "Motor para validar hipótesis de trading con pre-registro, permutaciones, Holm y prueba fuera de muestra"
 readme = "README.md"
 requires-python = ">=3.9"
